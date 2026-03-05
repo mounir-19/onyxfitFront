@@ -1,0 +1,116 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Open+Sans:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+body {
+  font-family: "Open Sans", sans-serif;
+}
+
+.bebas {
+  font-family: "Bebas Neue", sans-serif;
+}
+
+/* Scrollbar hide */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Ticker */
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-ticker {
+  animation: ticker 22s linear infinite;
+}
+
+/* Cart drawer */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.animate-slide-in-right {
+  animation: slideInRight 0.27s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hero content fade-up */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-slide-up {
+  animation: fadeSlideUp 0.5s ease both;
+}
+
+/* Nav link underline via ::after */
+.nav-underline {
+  position: relative;
+}
+.nav-underline::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #ef4444;
+  transform: scaleX(0);
+  transition: transform 0.18s;
+}
+.nav-underline:hover::after {
+  transform: scaleX(1);
+}
+
+/* Hero background: gradient overlay + gym photo */
+.hero-bg {
+  background: #111;
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.88) 0%,
+      rgba(0, 0, 0, 0.52) 55%,
+      rgba(0, 0, 0, 0.15) 100%
+    ),
+    url("https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1400&q=80");
+  background-size: cover;
+  background-position: center;
+}
+
+/* Promo banner background */
+.promo-bg {
+  background: #0d0d0d;
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.92) 35%,
+      rgba(0, 0, 0, 0.55) 70%,
+      rgba(0, 0, 0, 0.3) 100%
+    ),
+    url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1400&q=80");
+  background-size: cover;
+  background-position: center;
+}
+
+/* Goal card image zoom on hover */
+.goal-card:hover .goal-img {
+  transform: scale(1.08);
+}
+.goal-img {
+  transition: transform 0.45s ease;
+}
