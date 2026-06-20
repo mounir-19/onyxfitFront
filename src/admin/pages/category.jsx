@@ -37,6 +37,14 @@ export default function CategoriesPage() {
     }
   };
 
+  // NEW: handles both legacy relative paths and full Supabase URLs
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith('http')) return imagePath;
+    const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    return `${baseURL}${imagePath}`;
+  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -191,7 +199,7 @@ export default function CategoriesPage() {
                     <td className="px-6 py-4">
                       {category.image_url ? (
                         <img
-                          src={`http://localhost:5000${category.image_url}`}
+                          src={getImageUrl(category.image_url)}
                           alt={category.name}
                           className="w-10 h-10 rounded-lg object-cover"
                           onError={(e) => {
