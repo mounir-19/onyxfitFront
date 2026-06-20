@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { getCategories } from "../api/category"; // Your API file
+import { getCategories } from "../api/category";
+
+const NO_IMAGE_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect fill='%23d1d5db' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='14' fill='%239ca3af' text-anchor='middle' dominant-baseline='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
+
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return NO_IMAGE_SVG;
+  if (imagePath.startsWith("http")) return imagePath;
+  const baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  return `${baseURL}${imagePath}`;
+};
 
 export default function ShopByCategory() {
   const [categories, setCategories] = useState([]);
@@ -13,15 +22,13 @@ export default function ShopByCategory() {
         const catsData = data.data || data || [];
         const formattedCats = catsData.map(cat => ({
           label: cat.name,
-          img: cat.image_url
-            ? `http://localhost:5000${cat.image_url}`
-            : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect fill='%23d1d5db' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='14' fill='%239ca3af' text-anchor='middle' dominant-baseline='middle'%3ENo Image%3C/text%3E%3C/svg%3E"
+          img: getImageUrl(cat.image_url)
         }));
 
         setCategories(formattedCats);
       } catch (err) {
         console.error("Failed to fetch categories:", err);
-        setCategories([]); // Graceful fallback
+        setCategories([]);
       } finally {
         setLoading(false);
       }
@@ -30,7 +37,6 @@ export default function ShopByCategory() {
     fetchCategories();
   }, []);
 
-  // Loading skeleton
   if (loading) {
     return (
       <section className="bg-white py-14 px-6">
@@ -81,9 +87,7 @@ export default function ShopByCategory() {
                   alt={cat.label}
                   className="w-4/5 h-4/5 object-contain"
                   onError={(e) => {
-                    console.log(`Failed to load image for: ${cat.label}`);
-                    e.target.src =
-                      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect fill='%23d1d5db' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='14' fill='%239ca3af' text-anchor='middle' dominant-baseline='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
+                    e.target.src = NO_IMAGE_SVG;
                   }}
                 />
               </div>
@@ -94,7 +98,7 @@ export default function ShopByCategory() {
           ))}
         </div>
 
-        {/* Mobile: Horizontal Scroll (hidden scrollbar) */}
+        {/* Mobile: Horizontal Scroll */}
         <div className="md:hidden overflow-x-auto overflow-y-hidden -mx-6 px-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <div className="flex gap-4 min-h-0">
             {categories.map((cat) => (
@@ -108,9 +112,7 @@ export default function ShopByCategory() {
                     alt={cat.label}
                     className="w-4/5 h-4/5 object-contain"
                     onError={(e) => {
-                      console.log(`Failed to load image for: ${cat.label}`);
-                      e.target.src =
-                        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect fill='%23d1d5db' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='14' fill='%239ca3af' text-anchor='middle' dominant-baseline='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
+                      e.target.src = NO_IMAGE_SVG;
                     }}
                   />
                 </div>
