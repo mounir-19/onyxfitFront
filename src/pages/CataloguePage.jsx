@@ -1,16 +1,16 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import Stars from "../components/Stars.jsx";
-import { PRODUCTS } from "../data/index.js";
+import { getProducts, getCategories } from "../api/products";
+import { addToCart } from "../api/cart";
 
 /* ── FILTER CONFIG ── */
-const CATEGORIES = ["All", "Proteins", "Creatine", "Pre-Workout", "Amino Acids", "Vitamins"];
-const GOALS_LIST  = ["All", "Lean Muscle", "Gain Mass", "Lose Weight", "Recovery", "Strength", "General Health"];
+const GOALS_LIST = ["All", "Lean Muscle", "Gain Mass", "Lose Weight", "Recovery", "Strength", "General Health"];
 const SORT_OPTIONS = [
-  { value: "featured",   label: "Featured" },
-  { value: "price-asc",  label: "Price: Low to High" },
+  { value: "featured", label: "Featured" },
+  { value: "price-asc", label: "Price: Low to High" },
   { value: "price-desc", label: "Price: High to Low" },
-  { value: "rating",     label: "Best Rated" },
-  { value: "reviews",    label: "Most Reviewed" },
+  { value: "rating", label: "Best Rated" },
+  { value: "reviews", label: "Most Reviewed" },
 ];
 
 function ActivePill({ label, onRemove }) {
@@ -22,13 +22,44 @@ function ActivePill({ label, onRemove }) {
   );
 }
 
-function CatalogueCard({ p, onAdd, onNavigate }) {
+function CatalogueCard({ p, onAdd, onNavigate, userId }) {
   const [added, setAdded] = useState(false);
-  const handle = (e) => {
+
+  const handle = useCallback(async (e) => {
     e.stopPropagation();
-    onAdd(p);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1400);
+
+    if (!userId) {
+      alert("Please log in to add items to cart");
+      return;
+    }
+
+    const variant = p.variants?.[0];
+    if (!variant) {
+      alert("This product has no available variants");
+      return;
+    }
+
+    const cartData = {
+      user_id: userId,
+      variant_id: variant.id,
+      quantity: 1
+    };
+
+    try {
+      const response = await addToCart(cartData);
+      onAdd(p);
+      setAdded(true);
+      setTimeout(() => setAdded(false), 1400);
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to add to cart");
+    }
+  }, [p, onAdd, userId]);
+
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith('http')) return imagePath;
+    const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    return `${baseURL}${imagePath}`;
   };
 
   return (
@@ -36,7 +67,6 @@ function CatalogueCard({ p, onAdd, onNavigate }) {
       onClick={() => onNavigate("product", p.id)}
       className="bg-white rounded-lg border border-zinc-200 flex flex-col overflow-hidden hover:shadow-xl transition-shadow duration-200 h-full cursor-pointer group"
     >
-      {/* Image */}
       <div className="relative bg-zinc-100 aspect-square flex items-center justify-center p-4 overflow-hidden">
         {p.badge && (
           <span className="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-extrabold px-[7px] py-[2px] rounded-sm tracking-[0.07em] z-10">
@@ -44,84 +74,167 @@ function CatalogueCard({ p, onAdd, onNavigate }) {
           </span>
         )}
         <img
-          src={p.img}
+          src={getImageUrl(p.image_url)}
           alt={p.name}
           className="w-4/5 h-4/5 object-contain group-hover:scale-105 transition-transform duration-300"
           onError={(e) => { e.target.style.display = "none"; }}
         />
       </div>
 
-      {/* Info */}
       <div className="px-3.5 pt-3 flex-1">
-        <p className="text-[10px] font-bold tracking-[0.1em] text-red-500 uppercase mb-0.5">{p.brand}</p>
+        <p className="text-[10px] font-bold tracking-[0.1em] text-red-500 uppercase mb-0.5">{p.brand || "Brand"}</p>
         <p className="text-[13px] font-semibold text-zinc-900 leading-snug mb-2 min-h-[36px]">{p.name}</p>
-        <Stars rating={p.rating} />
+        <Stars rating={p.rating || 0} />
         <p className="text-[11px] text-zinc-400 mt-1 mb-2">{p.reviews > 0 ? `${p.reviews} Reviews` : "No reviews yet"}</p>
         <div className="flex items-baseline gap-2 mb-3">
           {p.oldPrice && (
-            <span className="text-[12px] text-red-400 line-through">€{p.oldPrice.toFixed(2)}</span>
+            <span className="text-[11px] text-zinc-400 line-through">€{p.oldPrice.toFixed(2)}</span>
           )}
-          <span className="text-[14px] text-zinc-900 font-bold">From €{p.price.toFixed(2)}</span>
+          <span className="text-[16px] text-zinc-900 font-bold">
+            {p.variants?.[0]?.price ? `€${p.variants[0].price}` : "Price N/A"}
+          </span>
         </div>
       </div>
 
-      {/* Button */}
       <button
         onClick={handle}
-        className={`mx-3.5 mb-3.5 py-2.5 rounded text-[11px] font-extrabold tracking-[0.1em] border-0 cursor-pointer transition-colors duration-150 ${
-          added ? "bg-green-600 text-white" : "bg-zinc-900 hover:bg-red-500 text-white"
-        }`}
+        disabled={!p.variants || p.variants.length === 0 || !userId}
+        className={`mx-3.5 mb-3.5 py-2.5 rounded text-[11px] font-extrabold tracking-[0.1em] border-0 cursor-pointer transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed ${added ? "bg-green-600 text-white" : "bg-zinc-900 hover:bg-red-500 text-white"
+          }`}
       >
-        {added ? "✓ ADDED" : "+ QUICK ADD"}
+        {!userId ? "LOG IN TO ADD" : added ? "✓ ADDED" : "+ QUICK ADD"}
       </button>
     </div>
   );
 }
 
-export default function CataloguePage({ onAdd, onNavigate }) {
-  const [search,   setSearch]   = useState("");
-  const [category, setCategory] = useState("All");
-  const [goal,     setGoal]     = useState("All");
-  const [maxPrice, setMaxPrice] = useState(200);
-  const [sort,     setSort]     = useState("featured");
-  const [sideOpen, setSideOpen] = useState(true);
+export default function CataloguePage({ onAdd, onNavigate, userId, initialCategoryName }) {
+  // ✅ FIXED: Load data ONCE only
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  /* ── FILTER + SORT ── */
+  const [filterKey, setFilterKey] = useState(0);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
+  const [goal, setGoal] = useState("All");
+  const [maxPrice, setMaxPrice] = useState(200);
+  const [sort, setSort] = useState("featured");
+  const [sideOpen, setSideOpen] = useState(false);
+  useEffect(() => {
+    console.log("🔄 CataloguePage FIRST LOAD");
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    console.log("🔍 Filter init:", { category, goal, maxPrice });
+    return () => {
+      // Reset on unmount (when navigating away)
+      setFilterKey(prev => prev + 1);
+    };
+  }, []);
+
+  const loadData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [productsRes, categoriesRes] = await Promise.all([
+        getProducts({}),
+        getCategories()
+      ]);
+
+      const allCategories = [{ id: "All", name: "All" }, ...(categoriesRes.data.data || [])];
+      setProducts(productsRes.data.data || []);
+      setCategories(allCategories);
+
+      // Apply category filter from nav link if it matches
+      if (initialCategoryName) {
+        const match = allCategories.find(
+          (c) => c.name.toLowerCase() === initialCategoryName.toLowerCase()
+        );
+        if (match) {
+          setCategory(match.id);
+          setSideOpen(true);
+        }
+      }
+    } catch (err) {
+      console.error("Error loading data:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [initialCategoryName]);
+
+  // ✅ PERFECT FILTERING - Client side only
   const filtered = useMemo(() => {
-    let list = [...PRODUCTS];
+    let list = [...products];
 
     if (search.trim()) {
       const q = search.toLowerCase();
       list = list.filter(
-        (p) => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          (p.brand && p.brand.toLowerCase().includes(q)) ||
+          (p.category_name && p.category_name.toLowerCase().includes(q))
       );
     }
-    if (category !== "All") list = list.filter((p) => p.category === category);
-    if (goal !== "All")     list = list.filter((p) => p.goal?.includes(goal));
-    list = list.filter((p) => p.price <= maxPrice);
+
+    if (category !== "All") {
+      list = list.filter((p) => p.category_id === category);
+    }
+
+    if (goal !== "All") {
+      list = list.filter((p) => p.goal?.includes(goal));
+    }
+
+    list = list.filter((p) => {
+      const price = p.variants?.[0]?.price || 0;
+      return price <= maxPrice;
+    });
 
     switch (sort) {
-      case "price-asc":  list.sort((a, b) => a.price - b.price); break;
-      case "price-desc": list.sort((a, b) => b.price - a.price); break;
-      case "rating":     list.sort((a, b) => b.rating - a.rating); break;
-      case "reviews":    list.sort((a, b) => b.reviews - a.reviews); break;
-      default: break;
+      case "price-asc":
+        list.sort((a, b) => (a.variants?.[0]?.price || 0) - (b.variants?.[0]?.price || 0));
+        break;
+      case "price-desc":
+        list.sort((a, b) => (b.variants?.[0]?.price || 0) - (a.variants?.[0]?.price || 0));
+        break;
+      case "rating":
+        list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        break;
+      case "reviews":
+        list.sort((a, b) => (b.reviews || 0) - (a.reviews || 0));
+        break;
+      default:
+        break;
     }
     return list;
-  }, [search, category, goal, maxPrice, sort]);
+  }, [products, search, category, goal, maxPrice, sort]);
 
   const activeFilters = [
-    ...(category !== "All" ? [{ label: `Category: ${category}`, clear: () => setCategory("All") }] : []),
-    ...(goal !== "All"     ? [{ label: `Goal: ${goal}`,         clear: () => setGoal("All") }]     : []),
-    ...(maxPrice < 200     ? [{ label: `Max: €${maxPrice}`,     clear: () => setMaxPrice(200) }]   : []),
+    ...(category !== "All" ? [{ label: `Category: ${categories.find(c => c.id === category)?.name}`, clear: () => setCategory("All") }] : []),
+    ...(goal !== "All" ? [{ label: `Goal: ${goal}`, clear: () => setGoal("All") }] : []),
+    ...(maxPrice < 200 ? [{ label: `Max: €${maxPrice}`, clear: () => setMaxPrice(200) }] : []),
   ];
 
-  const clearAll = () => { setCategory("All"); setGoal("All"); setMaxPrice(200); setSearch(""); };
+  const clearAll = useCallback(() => {
+    setCategory("All");
+    setGoal("All");
+    setMaxPrice(200);
+    setSearch("");
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-zinc-50">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-zinc-500">Loading products...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-zinc-50 min-h-screen">
-
-      {/* ── PAGE HEADER ── */}
       <div className="bg-zinc-900 py-10 px-6">
         <div className="max-w-screen-xl mx-auto">
           <nav className="flex items-center gap-2 text-[11px] text-zinc-500 font-medium tracking-[0.05em] mb-4">
@@ -136,7 +249,6 @@ export default function CataloguePage({ onAdd, onNavigate }) {
         </div>
       </div>
 
-      {/* ── SEARCH BAR (full width below header) ── */}
       <div className="bg-white border-b border-zinc-200 px-6 py-4">
         <div className="max-w-screen-xl mx-auto flex items-center gap-3">
           <div className="flex-1 relative">
@@ -157,7 +269,6 @@ export default function CataloguePage({ onAdd, onNavigate }) {
             )}
           </div>
 
-          {/* Sort */}
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
@@ -168,20 +279,19 @@ export default function CataloguePage({ onAdd, onNavigate }) {
             ))}
           </select>
 
-          {/* Toggle sidebar */}
           <button
             onClick={() => setSideOpen((o) => !o)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-[12px] font-bold tracking-[0.05em] cursor-pointer transition-all duration-150 ${sideOpen ? "bg-zinc-900 text-white border-zinc-900" : "bg-white text-zinc-700 border-zinc-300 hover:border-zinc-700"}`}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-[12px] font-bold tracking-[0.05em] cursor-pointer transition-all duration-150 ${sideOpen ? "bg-zinc-900 text-white border-zinc-900" : "bg-white text-zinc-700 border-zinc-300 hover:border-zinc-700"
+              }`}
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-              <line x1="4" y1="6"  x2="20" y2="6" /><line x1="8" y1="12" x2="20" y2="12" /><line x1="10" y1="18" x2="20" y2="18" />
+              <line x1="4" y1="6" x2="20" y2="6" /><line x1="8" y1="12" x2="20" y2="12" /><line x1="10" y1="18" x2="20" y2="18" />
             </svg>
             FILTERS
           </button>
         </div>
       </div>
 
-      {/* ── ACTIVE FILTER PILLS ── */}
       {activeFilters.length > 0 && (
         <div className="bg-white border-b border-zinc-100 px-6 py-2.5">
           <div className="max-w-screen-xl mx-auto flex items-center gap-2 flex-wrap">
@@ -196,43 +306,35 @@ export default function CataloguePage({ onAdd, onNavigate }) {
         </div>
       )}
 
-      {/* ── BODY: SIDEBAR + GRID ── */}
       <div className="max-w-screen-xl mx-auto px-6 py-8 flex gap-8 items-start">
-
-        {/* SIDEBAR */}
         {sideOpen && (
           <aside className="w-[220px] flex-none sticky top-[68px]">
             <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
-
-              {/* Category */}
               <div className="p-5 border-b border-zinc-100">
                 <p className="text-[11px] font-extrabold tracking-[0.1em] text-zinc-900 uppercase mb-3">Category</p>
-                {CATEGORIES.map((c) => (
+                {categories.map((c) => (
                   <button
-                    key={c}
-                    onClick={() => setCategory(c)}
-                    className={`w-full text-left flex items-center justify-between py-1.5 text-[12.5px] font-semibold cursor-pointer border-0 bg-transparent transition-colors duration-100 ${
-                      category === c ? "text-red-500" : "text-zinc-600 hover:text-zinc-900"
-                    }`}
+                    key={c.id}
+                    onClick={() => setCategory(c.id)}
+                    className={`w-full text-left flex items-center justify-between py-1.5 text-[12.5px] font-semibold cursor-pointer border-0 bg-transparent transition-colors duration-100 ${category === c.id ? "text-red-500" : "text-zinc-600 hover:text-zinc-900"
+                      }`}
                   >
-                    {c}
-                    {category === c && (
+                    {c.name}
+                    {category === c.id && (
                       <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M20 6 9 17l-5-5" /></svg>
                     )}
                   </button>
                 ))}
               </div>
 
-              {/* Goal */}
               <div className="p-5 border-b border-zinc-100">
                 <p className="text-[11px] font-extrabold tracking-[0.1em] text-zinc-900 uppercase mb-3">Goal</p>
                 {GOALS_LIST.map((g) => (
                   <button
                     key={g}
                     onClick={() => setGoal(g)}
-                    className={`w-full text-left flex items-center justify-between py-1.5 text-[12.5px] font-semibold cursor-pointer border-0 bg-transparent transition-colors duration-100 ${
-                      goal === g ? "text-red-500" : "text-zinc-600 hover:text-zinc-900"
-                    }`}
+                    className={`w-full text-left flex items-center justify-between py-1.5 text-[12.5px] font-semibold cursor-pointer border-0 bg-transparent transition-colors duration-100 ${goal === g ? "text-red-500" : "text-zinc-600 hover:text-zinc-900"
+                      }`}
                   >
                     {g}
                     {goal === g && (
@@ -242,7 +344,6 @@ export default function CataloguePage({ onAdd, onNavigate }) {
                 ))}
               </div>
 
-              {/* Price range */}
               <div className="p-5">
                 <p className="text-[11px] font-extrabold tracking-[0.1em] text-zinc-900 uppercase mb-3">Max Price</p>
                 <div className="flex items-center justify-between mb-2">
@@ -265,7 +366,6 @@ export default function CataloguePage({ onAdd, onNavigate }) {
               </div>
             </div>
 
-            {/* Reset */}
             {activeFilters.length > 0 && (
               <button
                 onClick={clearAll}
@@ -277,7 +377,6 @@ export default function CataloguePage({ onAdd, onNavigate }) {
           </aside>
         )}
 
-        {/* PRODUCT GRID */}
         <div className="flex-1 min-w-0">
           {filtered.length === 0 ? (
             <div className="text-center py-24">
@@ -291,7 +390,7 @@ export default function CataloguePage({ onAdd, onNavigate }) {
           ) : (
             <div className={`grid gap-4 ${sideOpen ? "grid-cols-2 md:grid-cols-3" : "grid-cols-2 md:grid-cols-4"}`}>
               {filtered.map((p) => (
-                <CatalogueCard key={p.id} p={p} onAdd={onAdd} onNavigate={onNavigate} />
+                <CatalogueCard key={p.id} p={p} onAdd={onAdd} onNavigate={onNavigate} userId={userId} />
               ))}
             </div>
           )}

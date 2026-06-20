@@ -1,3 +1,20 @@
+import plant from "../assets/plant.png";
+import creatine from "../assets/creatine.png";
+import protein from "../assets/protien.png";
+import energy from "../assets/energy.png";
+import range from "../assets/Range.png";
+import multivitamins from "../assets/multivitamin.png";
+import str from "../assets/str.png";
+import rec from "../assets/recovery.png";
+import lean from "../assets/lean.png";
+import gain from "../assets/gain.png";
+import lose from "../assets/lose.png";
+import b1 from "../assets/best1.png";
+import b2 from "../assets/best2.png";
+import b3 from "../assets/best3.png";
+import b4 from "../assets/best4.png";
+import heroSection from "../assets/heroSection.png"; // adjust extension if .jpg/.webp
+
 export const NAV_LINKS = [
   "FOOD",
   "PROTEINS",
@@ -12,89 +29,61 @@ export const TICKER_TEXT =
 
 export const SLIDES = [
   {
-    badge: "LIMITED EDITION",
-    l1: "ELEVATE",
-    l2: "YOUR GAINS",
-    sub: "Hardcore mass gainer perfect for bodybuilders. Push your limits and achieve the impossible.",
-    img: "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=700&q=80",
-  },
-  {
-    badge: "NEW ARRIVAL",
-    l1: "UNLEASH",
-    l2: "YOUR POWER",
-    sub: "Premium pre-workout formula engineered for maximum performance and endurance.",
-    img: "https://images.unsplash.com/photo-1647892530567-f4d8f4c13952?w=700&q=80",
-  },
-  {
-    badge: "BESTSELLER",
-    l1: "BUILD",
-    l2: "PURE MUSCLE",
-    sub: "Gold Standard 100% Whey — the world's best-selling protein powder.",
-    img: "https://images.unsplash.com/photo-1579722820308-d74e571900a9?w=700&q=80",
-  },
-  {
-    badge: "SALE",
-    l1: "TRAIN",
-    l2: "HARDER",
-    sub: "Everything you need to fuel your workouts and crush your personal records.",
-    img: "https://images.unsplash.com/photo-1534367610401-9f5ed68180aa?w=700&q=80",
-  },
-  {
     badge: "FLASH DEAL",
     l1: "RECOVER",
     l2: "FASTER",
-    sub: "Advanced recovery supplements to get you back in the gym sooner.",
-    img: "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=700&q=80",
+    sub: "Advanced recovery supplements to help your muscles bounce back after hard training.",
+    product: "BCAA Recovery Formula",
+    img: heroSection
   },
 ];
-
 export const CATS = [
   {
     label: "Protein\nPowders",
-    img: "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=240&q=80",
+    img: protein,
   },
   {
     label: "Creatine",
-    img: "https://images.unsplash.com/photo-1648984732564-4f39da64bd13?w=240&q=80",
+    img: creatine,
   },
   {
     label: "Energy",
-    img: "https://images.unsplash.com/photo-1626201849923-a5e32f5c3a7e?w=240&q=80",
+    img: energy,
   },
   {
     label: "Platinium\nRange",
-    img: "https://images.unsplash.com/photo-1611077543867-bab08b6cf9b4?w=240&q=80",
+    img: range,
   },
   {
     label: "Multivitamins",
-    img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=240&q=80",
+    img: multivitamins,
   },
   {
     label: "Plant protein",
-    img: "https://images.unsplash.com/photo-1622484212850-eb596d769edc?w=240&q=80",
+    img: plant,
   },
 ];
 
 export const GOALS = [
   {
     label: "LEAN\nMUSCLE",
-    img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80",
+    img: lean,
   },
   {
     label: "GAIN\nMASS",
-    img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80",
+    img: gain,
   },
   {
     label: "LOSE\nWEIGHT",
-    img: "https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=400&q=80",
+    img: lose,
   },
   {
     label: "RECOVERY",
-    img: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&q=80",
+    img: rec,
   },
   {
     label: "STRENGTH",
-    img: "https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=400&q=80",
+    img: str,
   },
 ];
 
@@ -110,7 +99,7 @@ export const PRODUCTS = [
     price: 21.99,
     oldPrice: null,
     badge: null,
-    img: "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=300&q=80",
+    img: b1,
     imgs: [
       "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=700&q=80",
       "https://images.unsplash.com/photo-1579722820308-d74e571900a9?w=700&q=80",
@@ -152,7 +141,7 @@ export const PRODUCTS = [
     price: 174.0,
     oldPrice: 169.2,
     badge: "SAVE €4.80",
-    img: "https://images.unsplash.com/photo-1579722820308-d74e571900a9?w=300&q=80",
+    img: b2,
     imgs: [
       "https://images.unsplash.com/photo-1579722820308-d74e571900a9?w=700&q=80",
       "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=700&q=80",
@@ -188,7 +177,7 @@ export const PRODUCTS = [
     price: 15.0,
     oldPrice: null,
     badge: null,
-    img: "https://images.unsplash.com/photo-1648984732564-4f39da64bd13?w=300&q=80",
+    img: b3,
     imgs: [
       "https://images.unsplash.com/photo-1648984732564-4f39da64bd13?w=700&q=80",
       "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=700&q=80",
@@ -224,7 +213,7 @@ export const PRODUCTS = [
     price: 30.0,
     oldPrice: null,
     badge: null,
-    img: "https://images.unsplash.com/photo-1611077543867-bab08b6cf9b4?w=300&q=80",
+    img: b4,
     imgs: [
       "https://images.unsplash.com/photo-1611077543867-bab08b6cf9b4?w=700&q=80",
       "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=700&q=80",
@@ -247,149 +236,6 @@ export const PRODUCTS = [
       { label: "Sugars", value: "20g" },
       { label: "Fat", value: "4.5g" },
       { label: "Sodium", value: "470mg" },
-    ],
-  },
-  {
-    id: 5,
-    name: "ON Pre-Workout Advanced Formula",
-    brand: "Optimum Nutrition",
-    category: "Pre-Workout",
-    goal: ["Strength", "Lean Muscle"],
-    rating: 4.7,
-    reviews: 892,
-    price: 34.99,
-    oldPrice: 39.99,
-    badge: "SAVE €5",
-    img: "https://images.unsplash.com/photo-1647892530567-f4d8f4c13952?w=300&q=80",
-    imgs: [
-      "https://images.unsplash.com/photo-1647892530567-f4d8f4c13952?w=700&q=80",
-      "https://images.unsplash.com/photo-1534367610401-9f5ed68180aa?w=700&q=80",
-    ],
-    flavours: ["Blue Raspberry", "Watermelon", "Green Apple", "Fruit Punch"],
-    sizes: ["195g", "390g"],
-    description:
-      "Optimum Nutrition Pre-Workout Advanced is engineered for maximum performance. Formulated with caffeine, beta-alanine, citrulline and B-vitamins to amplify energy, focus, endurance and blood flow during your most demanding training sessions.",
-    highlights: [
-      "175mg caffeine per serving",
-      "1.5g beta-alanine",
-      "1.5g L-citrulline",
-      "B-vitamin complex",
-      "No artificial colours",
-    ],
-    nutrition: [
-      { label: "Calories", value: "10 kcal" },
-      { label: "Protein", value: "0g" },
-      { label: "Carbohydrates", value: "2g" },
-      { label: "Caffeine", value: "175mg" },
-      { label: "Beta-Alanine", value: "1.5g" },
-      { label: "L-Citrulline", value: "1.5g" },
-    ],
-  },
-  {
-    id: 6,
-    name: "Optimum Nutrition BCAA Capsules 400ct",
-    brand: "Optimum Nutrition",
-    category: "Amino Acids",
-    goal: ["Recovery", "Lean Muscle"],
-    rating: 4.6,
-    reviews: 543,
-    price: 18.5,
-    oldPrice: null,
-    badge: null,
-    img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&q=80",
-    imgs: [
-      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=700&q=80",
-      "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=700&q=80",
-    ],
-    flavours: ["Unflavoured (Capsules)"],
-    sizes: ["200ct", "400ct"],
-    description:
-      "BCAAs (Branched Chain Amino Acids) are essential amino acids that your body cannot produce on its own. Leucine, Isoleucine and Valine in a 2:1:1 ratio support muscle protein synthesis, reduce exercise-induced muscle soreness and speed up recovery.",
-    highlights: [
-      "2:1:1 BCAA ratio",
-      "5g BCAAs per serving (4 caps)",
-      "Leucine, Isoleucine & Valine",
-      "Easy-to-swallow capsules",
-      "400 capsules — 100 servings",
-    ],
-    nutrition: [
-      { label: "Calories", value: "5 kcal" },
-      { label: "Protein", value: "1g" },
-      { label: "Total BCAAs", value: "5g" },
-      { label: "L-Leucine", value: "2.5g" },
-      { label: "L-Isoleucine", value: "1.25g" },
-      { label: "L-Valine", value: "1.25g" },
-    ],
-  },
-  {
-    id: 7,
-    name: "Plant-Based Protein Powder",
-    brand: "GymBros",
-    category: "Proteins",
-    goal: ["Lean Muscle", "Recovery"],
-    rating: 4.5,
-    reviews: 312,
-    price: 26.99,
-    oldPrice: 31.99,
-    badge: "SALE",
-    img: "https://images.unsplash.com/photo-1622484212850-eb596d769edc?w=300&q=80",
-    imgs: [
-      "https://images.unsplash.com/photo-1622484212850-eb596d769edc?w=700&q=80",
-      "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=700&q=80",
-    ],
-    flavours: ["Vanilla Caramel", "Chocolate Brownie", "Unflavoured"],
-    sizes: ["500g", "1000g"],
-    description:
-      "A premium plant-based protein blend combining pea protein, brown rice protein and hemp protein for a complete amino acid profile. Perfect for vegans, vegetarians or anyone looking to diversify their protein sources.",
-    highlights: [
-      "20g protein per serving",
-      "Complete amino acid profile",
-      "100% plant-based & vegan",
-      "No soy, no gluten",
-      "Naturally sweetened",
-    ],
-    nutrition: [
-      { label: "Calories", value: "110 kcal" },
-      { label: "Protein", value: "20g" },
-      { label: "Carbohydrates", value: "5g" },
-      { label: "Sugars", value: "2g" },
-      { label: "Fat", value: "2g" },
-      { label: "Fibre", value: "3g" },
-    ],
-  },
-  {
-    id: 8,
-    name: "Daily Multivitamin Complex",
-    brand: "GymBros",
-    category: "Vitamins",
-    goal: ["Recovery", "General Health"],
-    rating: 4.7,
-    reviews: 88,
-    price: 12.99,
-    oldPrice: null,
-    badge: "NEW",
-    img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&q=80",
-    imgs: [
-      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=700&q=80",
-    ],
-    flavours: ["Unflavoured (Tablets)"],
-    sizes: ["60ct", "120ct"],
-    description:
-      "A comprehensive daily multivitamin formulated specifically for active individuals. Contains 23 essential vitamins and minerals at optimal doses to fill nutritional gaps, support immune function and maintain peak performance.",
-    highlights: [
-      "23 vitamins & minerals",
-      "Vitamin D3 + K2 for bones",
-      "B-vitamin complex for energy",
-      "Zinc & selenium for immunity",
-      "Once-daily formula",
-    ],
-    nutrition: [
-      { label: "Vitamin C", value: "80mg" },
-      { label: "Vitamin D3", value: "25µg" },
-      { label: "Vitamin B12", value: "2.5µg" },
-      { label: "Zinc", value: "10mg" },
-      { label: "Magnesium", value: "56mg" },
-      { label: "Iron", value: "14mg" },
     ],
   },
 ];
